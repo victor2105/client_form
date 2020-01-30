@@ -1,10 +1,12 @@
 <script>
   import { onMount } from "svelte";
   import Wizzard from "./Wizzard.svelte";
-  import { createForm } from "./activeCampaign.js";
+  import { createForm, step1Valid } from "./activeCampaign.js";
   import Button from "./Button.svelte";
   import WizzardShell from "./WizzardShell.svelte";
   import { uploadBlobFile } from "./firebase";
+
+  const fields_step_1 = [];
 
   const steps = [
     {
@@ -30,6 +32,7 @@
   }
 
   function next() {
+    if (!step1Valid) return;
     index = index + 1;
   }
 
@@ -554,7 +557,7 @@
   novalidate>
   <input type="hidden" name="u" value="9" />
   <input type="hidden" name="f" value="9" />
-  <input type="hidden" name="s" />
+  <input type="hidden" name="s" value="9" />
   <input type="hidden" name="c" value="0" />
   <input type="hidden" name="m" value="0" />
   <input type="hidden" name="act" value="sub" />
@@ -573,6 +576,7 @@
           <input
             type="text"
             name="field[8]"
+            step="1"
             value=""
             placeholder="0"
             required />
@@ -584,6 +588,7 @@
           <input
             type="text"
             name="field[9]"
+            step="1"
             value=""
             placeholder="0"
             required />
@@ -595,6 +600,7 @@
           <input
             type="text"
             name="field[11]"
+            step="1"
             value=""
             placeholder="0"
             required />
@@ -603,13 +609,19 @@
       <div class="_form_element _x05439407 _full_width ">
         <label class="_form-label">Nome Completo*</label>
         <div class="_field-wrapper">
-          <input type="text" name="fullname" placeholder="" required />
+          <input type="text" name="fullname" step="1" placeholder="" required />
         </div>
       </div>
       <div class="_form_element _x58989238 _full_width ">
         <label class="_form-label">Email*</label>
         <div class="_field-wrapper">
-          <input type="text" id="email" name="email" placeholder="" required />
+          <input
+            type="text"
+            id="email"
+            name="email"
+            step="1"
+            placeholder=""
+            required />
           <div id="msgemail" />
         </div>
       </div>
@@ -620,6 +632,7 @@
             type="text"
             bind:this={cpf}
             name="field[6]"
+            step="1"
             id="cpf"
             value=""
             placeholder="___.___.___-__"
@@ -633,6 +646,7 @@
           <input
             type="text"
             name="field[7]"
+            step="1"
             value=""
             placeholder="__/__/____"
             data-inputmask="'mask': '99/99/9999'" />
@@ -642,8 +656,10 @@
         <label class="_form-label">Telefone (DDD)*</label>
         <div class="_field-wrapper">
           <input
-            type="tel"
+            id="tel"
+            type="text"
             name="field[2]"
+            step="1"
             value=""
             required
             placeholder="(___) _____ ____"
@@ -656,6 +672,7 @@
           <input
             type="text"
             name="field[1]"
+            step="1"
             value=""
             placeholder="XX.XXX.XXX/YYYY-ZZ"
             data-inputmask="'mask': '99.999.999/9999-99'" />
@@ -664,13 +681,39 @@
       <div class="_form_element _field10 _full_width ">
         <label class="_form-label">Razão social da empresa</label>
         <div class="_field-wrapper">
-          <input type="text" name="field[10]" value="" placeholder="" />
+          <input
+            type="text"
+            name="field[10]"
+            step="1"
+            value=""
+            placeholder="" />
         </div>
       </div>
 
       <div class="buttons">
-        <div />
-        <Button id="_form_9_submit" on:click={next}>Próximo</Button>
+        <div
+          class="elementor-element elementor-element-d0ebb8e
+          elementor-align-center elementor-widget elementor-widget-button"
+          data-id="d0ebb8e"
+          data-element_type="widget"
+          data-widget_type="button.default">
+          <div class="elementor-widget-container">
+            <div class="elementor-button-wrapper">
+              <a
+                id="next_step1"
+                disabled={!step1Valid}
+                style="cursor: pointer"
+                on:click={next}
+                class="elementor-button-link elementor-button elementor-size-xl
+                elementor-animation-float"
+                role="button">
+                <span class="elementor-button-content-wrapper">
+                  <span class="elementor-button-text">Próximo</span>
+                </span>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </WizzardShell>
 
@@ -679,7 +722,8 @@
         <label class="_form-label">Telefone fixo</label>
         <div class="_field-wrapper">
           <input
-            type="tel"
+            id="tel2"
+            type="text"
             name="phone"
             placeholder="(___) _____ ____"
             data-inputmask="'mask': '(999) 99999 9999'" />

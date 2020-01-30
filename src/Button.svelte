@@ -1,6 +1,7 @@
 <script>
   export let type = "";
   export let id="";
+  export let disabled=false;
 </script>
 
 <style>
@@ -87,6 +88,7 @@
       {#if type === 'submit'}
         <button
           id={id}
+          disabled={disabled}
           class="elementor-button-link elementor-button elementor-size-xl
           elementor-animation-float"
           type="submit"
@@ -102,6 +104,7 @@
       {:else}
         <a
           id={id}
+          disabled={disabled}
           style="cursor: pointer"
           on:click
           class="elementor-button-link elementor-button elementor-size-xl

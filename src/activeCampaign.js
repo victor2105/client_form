@@ -1,6 +1,8 @@
 import { validateCPF } from './validateCPF'
 
-window.cfields = { "8": "valor", "9": "nmero_de_parcelas", "11": "total_do_emprstimo", "6": "cpf", "7": "data_de_nascimento", "2": "telefon_ddd", "1": "cnpj", "10": "razo_social_da_empresa", "12": "nome_da_me", "13": "endereo_completo", "14": "renda_bruta_mensal" };
+export var step1Valid = true;
+
+window.cfields = { "8": "valor", "9": "nmero_de_parcelas", "11": "total_do_emprstimo", "6": "cpf", "7": "data_de_nascimento", "2": "telefon_ddd", "1": "cnpj", "10": "razo_social_da_empresa", "12": "nome_da_me", "13": "endereo_completo", "15": "cidade", "17": "estado", "16": "cep", "14": "renda_bruta_mensal", "18": "anexar_extrato_movimentao_bancaria_dos_ltimos_3_meses_da_empresa", "19": "anexar_extrato_movimentao_bancaria_dos_ltimos_3_meses_pessoa_fsica" };
 window._show_thank_you = function (id, message, trackcmp_url) {
   var form = document.getElementById('_form_' + id + '_'), thank_you = form.querySelector('._form-thank-you');
   form.querySelector('._form-content').style.display = 'none';
@@ -73,6 +75,22 @@ function createForm() {
   var _removed = false;
   var form_to_submit = document.getElementById('_form_9_');
   var allInputs = form_to_submit.querySelectorAll('input, select, textarea'), tooltips = [], submitted = false;
+  var allInputsStep1 = [];
+  var nextStep = document.getElementById("next_step1");
+
+  for (var i = 0; i < allInputs.length; i++) {
+    let elem = allInputs[i];
+    if(elem.step === '1'){
+      if(elem.getAttribute('required') === null){
+        allInputsStep1[elem.name] = 0;
+      }else{
+        allInputsStep1[elem.name] = -1;
+        step1Valid = false;
+      }
+    }
+  }
+
+  nextStep.disabled = !step1Valid;
 
   var getUrlParam = function (name) {
     var regexStr = '[\?&]' + name + '=([^&#]*)';
@@ -156,8 +174,11 @@ function createForm() {
       if (!tooltips[i].no_arrow) resize_tooltip(tooltips[i]);
     }
   };
-  function validate_field(elem, remove) {
+  var validate_field = function (elem, remove) {
     var tooltip = null, value = elem.value, no_error = true;
+    
+    allInputsStep1[elem.name] = 0;
+
     remove ? remove_tooltip(elem) : false;
     if (elem.type != 'checkbox') elem.className = elem.className.replace(/ ?_has_error ?/g, '');
     if (elem.getAttribute('required') !== null) {
@@ -226,6 +247,9 @@ function createForm() {
         elem.className = elem.className + ' _has_error';
         no_error = false;
         tooltip = create_tooltip(elem, "Informe um email válido.");
+        if(elem.step === '1'){
+          allInputsStep1[elem.name] = -1;
+        }
       }
     }
 
@@ -235,14 +259,20 @@ function createForm() {
         elem.className = elem.className + ' _has_error';
         no_error = false;
         tooltip = create_tooltip(elem, "Informe um CPF válido");
+        if(elem.step === '1'){
+          allInputsStep1[elem.name] = -1;
+        }
       }
     }
 
-    if (no_error && elem.type == 'tel') {
+    if (no_error && (elem.id == 'tel' || elem.id == 'tel2')) {
       if (!value.match(/^\(\d{3}\) \d{5} \d{4}$/)) {
         elem.className = elem.className + ' _has_error';
         no_error = false;
         tooltip = create_tooltip(elem, "Informe um número válido");
+        if(elem.step === '1'){
+          allInputsStep1[elem.name] = -1;
+        }
       }
     }
 
@@ -251,15 +281,27 @@ function createForm() {
         elem.className = elem.className + ' _has_error';
         no_error = false;
         tooltip = create_tooltip(elem, "Informe uma data válida.");
+        if(elem.step === '1'){
+          allInputsStep1[elem.name] = -1;
+        }
       }
     }
+    let step1localValid = true;
+    for(var key in allInputsStep1){
+      if(allInputsStep1[key] === -1){
+        step1localValid = false;
+        break;
+      }
+    }
+    step1Valid = step1localValid;
+    nextStep.disabled = !step1Valid;
     tooltip ? resize_tooltip(tooltip) : false;
     return no_error;
   };
   var needs_validate = function (el) {
     return el.name == 'email' || el.getAttribute('required') !== null;
   };
-  
+
   var addBlur = function () {
     if (!submitted) {
       submitted = true;
