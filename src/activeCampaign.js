@@ -233,11 +233,15 @@ function createForm() {
         if (!selected) {
           elem.className = elem.className + ' _has_error';
           no_error = false;
+          if(elem.step === '1')
+            allInputsStep1[elem.name] = -1;
           tooltip = create_tooltip(elem, "Por favor, selecione uma opção");
         }
       } else if (value === undefined || value === null || value === '') {
         elem.className = elem.className + ' _has_error';
         no_error = false;
+        if(elem.step === '1')
+            allInputsStep1[elem.name] = -1;
         tooltip = create_tooltip(elem, "Campo obrigatório");
       }
     }

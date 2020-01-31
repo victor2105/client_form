@@ -32,6 +32,7 @@
   }
 
   function next() {
+    console.log("next");
     if (!step1Valid) return;
     index = index + 1;
   }
@@ -699,9 +700,8 @@
           data-widget_type="button.default">
           <div class="elementor-widget-container">
             <div class="elementor-button-wrapper">
-              <a
+              <button
                 id="next_step1"
-                disabled={!step1Valid}
                 style="cursor: pointer"
                 on:click={next}
                 class="elementor-button-link elementor-button elementor-size-xl
@@ -710,7 +710,7 @@
                 <span class="elementor-button-content-wrapper">
                   <span class="elementor-button-text">Próximo</span>
                 </span>
-              </a>
+              </button>
             </div>
           </div>
         </div>
